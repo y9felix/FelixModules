@@ -14,55 +14,33 @@ class MusicMod(loader.Module):
         "no_query": "<emoji document_id=5337117114392127164>🤷‍♂</emoji> <b>Provide a search query.</b>",
         "searching": "<emoji document_id=5258396243666681152>🔎</emoji> <b>Searching...</b>",
         "not_found": "<emoji document_id=5843952899184398024>🚫</emoji> <b>Track not found</b>",
-        "invalid_service": "<emoji document_id=5462295343642956603>🚫</emoji> <b>Invalid service. Use yandex/ya, vk, sc</b>",
-        "usage": "<b>Usage:</b> <code>.music [yandex|vk|sc] [track name]</code>",
+        "usage": "<b>Usage:</b> <code>.music [track name]</code>",
         "error": "<emoji document_id=5843952899184398024>🚫</emoji> <b>Error: {}</b>",
         "flood_wait": "<emoji document_id=5462295343642956603>⏳</emoji> <b>Wait {}s (Telegram limits).</b>",
         "bot_error": "<emoji document_id=5228947933545635555>🤖</emoji> <b>Bot error: {}</b>",
     }
 
     def __init__(self):
-        self.murglar_bot = "@murglar_bot"
-        self.service_map = {
-            "ya": "ynd",
-            "vk": "vk",
-            "sc": "sc"
-        }
+        self.bot = "@eliteSCbot"
 
     @loader.command()
     async def music(self, message: Message):
         args = utils.get_args(message)
+        query = ""
 
-        if not args:
-            if reply := await message.get_reply_message():
-                await self._search(message, "ynd", reply.raw_text.strip())
-            else:
-                await utils.answer(message, self.strings("usage"))
-            return
+        if args:
+            query = " ".join(args)
+        elif reply := await message.get_reply_message():
+            query = reply.raw_text.strip()
 
-        service = args[0].lower()
-        if service not in self.service_map:
-            await utils.answer(message, self.strings("invalid_service"))
-            return
-
-        await self._search(
-            message,
-            self.service_map[service],
-            " ".join(args[1:]) if len(args) > 1 else ""
-        )
-
-    async def _search(self, message: Message, service: str, query: str):
         if not query:
-            await utils.answer(message, self.strings("no_query"))
+            await utils.answer(message, self.strings("usage"))
             return
 
         await utils.answer(message, self.strings("searching"))
 
         try:
-            results = await message.client.inline_query(
-                self.murglar_bot,
-                f"s:{service} {query}"
-            )
+            results = await message.client.inline_query(self.bot, query)
 
             if not results:
                 await utils.answer(message, self.strings("not_found"))

@@ -12,7 +12,6 @@ class MusicMod(loader.Module):
     strings = {
         "name": "Music",
         "no_query": "<emoji document_id=5337117114392127164>🤷‍♂</emoji> <b>Provide a search query.</b>",
-        "searching": "<emoji document_id=5258396243666681152>🔎</emoji> <b>Searching...</b>",
         "not_found": "<emoji document_id=5843952899184398024>🚫</emoji> <b>Track not found</b>",
         "usage": "<b>Usage:</b> <code>.music [track name]</code>",
         "error": "<emoji document_id=5843952899184398024>🚫</emoji> <b>Error: {}</b>",
@@ -24,7 +23,7 @@ class MusicMod(loader.Module):
         self.bot = "@eliteSCbot"
 
     @loader.command()
-    async def music(self, message: Message):
+    async def m(self, message: Message):
         args = utils.get_args(message)
         query = ""
 
@@ -36,8 +35,6 @@ class MusicMod(loader.Module):
         if not query:
             await utils.answer(message, self.strings("usage"))
             return
-
-        await utils.answer(message, self.strings("searching"))
 
         try:
             results = await message.client.inline_query(self.bot, query)

@@ -24,7 +24,7 @@ class MusicMod(loader.Module):
         self.bot = "@eliteSCbot"
 
     @loader.command()
-    async def music(self, message: Message):
+    async def m(self, message: Message):
         args = utils.get_args(message)
         query = ""
 
@@ -62,3 +62,4 @@ class MusicMod(loader.Module):
         except Exception as e:
             logger.exception("Search error:")
             await utils.answer(message, self.strings("error").format(str(e)))
+
